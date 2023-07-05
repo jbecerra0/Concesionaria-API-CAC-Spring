@@ -12,7 +12,7 @@ Una concesionaria de autos desea realizar una api REST que le permita realizar l
 Dado que la concesionaria es un cliente muy exigente, se sugiere utilizar la arquitectura multicapa y buenas prácticas relacionadas a esta arquitectura.
 
 Ejemplo de payload de carga: 
-
+```
 {
 	"brand": "Chevrolet",
 	"model": "Corsa",
@@ -31,3 +31,4 @@ Ejemplo de payload de carga:
 	],
 	"countOfOwners": "2" 
 }
+```
