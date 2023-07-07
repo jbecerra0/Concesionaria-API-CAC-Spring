@@ -16,13 +16,6 @@ public class VehicleMapper {
         return mapper.map(vehicle, VehicleDTO.class);
     }
 
-    public static List<Vehicle> convertDTOSToEntities(List<VehicleDTO> vehicleDTOS) {
-        return vehicleDTOS
-                .stream()
-                .map(VehicleMapper::convertDTOToEntity)
-                .toList();
-    }
-
     public static List<VehicleDTO> convertEntitiesToDTOS(List<Vehicle> vehicles) {
         return vehicles
                 .stream()
