@@ -8,12 +8,15 @@ import com.jbecerra.Concesionaria.entity.ServiceVehicle;
 import com.jbecerra.Concesionaria.entity.Vehicle;
 import com.jbecerra.Concesionaria.exceptions.InvalidDateRangeException;
 import com.jbecerra.Concesionaria.exceptions.VehicleNotFoundException;
+import com.jbecerra.Concesionaria.exceptions.VehiclesNotFoundException;
 import com.jbecerra.Concesionaria.repository.VehicleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -51,10 +54,30 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public ResponseVehiclesDTO vehiclesSinceTo(LocalDate since, LocalDate to) {
         if (since.isAfter(to)) {
-            throw new InvalidDateRangeException("La fecha de inicio no puede ser posterior a la fecha de fin.");
+            throw new InvalidDateRangeException("La fecha de inicio (" + since + ") no puede ser posterior a la fecha de fin (" + since + ").");
         }
 
-        return null;
+        List<Vehicle> vehicles = vehicleRepository.findByManufacturingDateBetween(since, to);
+
+        if (vehicles.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", Locale.of("es", "ES"));
+            throw new VehiclesNotFoundException("No se encontraron vehiculos manufacturados entre " + since.format(formatter) + " y el " + to.format(formatter));
+        }
+
+        ModelMapper mapper = new ModelMapper();
+
+        List<VehicleDTO> vehicleDTOS = vehicles.stream().map(vehicle -> {
+            List<ServiceVehicleDTO> serviceVehicleDTOS = vehicle
+                    .getServiceVehicles()
+                    .stream()
+                    .map(serviceVehicle -> mapper.map(serviceVehicle, ServiceVehicleDTO.class))
+                    .toList();
+            VehicleDTO vehicleDTO = mapper.map(vehicle, VehicleDTO.class);
+            vehicleDTO.setServices(serviceVehicleDTOS);
+            return vehicleDTO;
+        }).toList();
+
+        return new ResponseVehiclesDTO("Se han encontrado vehiculos manufacturados entre las 2 fechas proporcionadas", vehicleDTOS);
     }
 
     @Override

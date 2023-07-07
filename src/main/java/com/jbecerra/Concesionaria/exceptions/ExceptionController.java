@@ -10,12 +10,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionController {
     @ExceptionHandler(VehicleNotFoundException.class)
     public ResponseEntity<?> vehicleNotFound(VehicleNotFoundException e) {
-        return new ResponseEntity<>(new ErrorDTO("No existe el vehiculo solicitado", e.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorDTO("No se encontro el vehiculo solicitado", e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(VehiclesNotFoundException.class)
+    public ResponseEntity<?> vehiclesNotFound(VehiclesNotFoundException e) {
+        return new ResponseEntity<>(new ErrorDTO("No se encontraron los vehiculos solicitados", e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<?> invalidDateRange(InvalidDateRangeException e) {
-        return new ResponseEntity<>(new ErrorDTO("Fechas ingresadas son invalidas", e.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorDTO("Fechas ingresadas invalidas", e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 }
