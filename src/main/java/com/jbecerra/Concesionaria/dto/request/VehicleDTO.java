@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleDTO {
@@ -20,6 +22,6 @@ public class VehicleDTO {
     private String doors;
     private String price;
     private String currency;
-    private ArrayList<ServiceVehicleDTO> services;
+    private List<ServiceVehicleDTO> services;
     private String countOfOwners;
 }

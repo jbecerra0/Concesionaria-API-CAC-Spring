@@ -13,4 +13,9 @@ public class ExceptionController {
         return new ResponseEntity<>(new ErrorDTO("No existe el vehiculo solicitado", e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ResponseEntity<?> invalidDateRange(InvalidDateRangeException e) {
+        return new ResponseEntity<>(new ErrorDTO("Fechas ingresadas son invalidas", e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
 }
