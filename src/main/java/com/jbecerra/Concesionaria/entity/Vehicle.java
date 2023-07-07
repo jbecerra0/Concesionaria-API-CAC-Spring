@@ -1,18 +1,23 @@
 package com.jbecerra.Concesionaria.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "vehicle")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicle {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String brand;
     private String model;
     @JsonFormat(pattern="yyyy-MM-dd")
@@ -21,6 +26,7 @@ public class Vehicle {
     private String doors;
     private String price;
     private String currency;
-    private ArrayList<ServiceVehicle> serviceVehicles;
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private List<ServiceVehicle> serviceVehicles;
     private String countOfOwners;
 }

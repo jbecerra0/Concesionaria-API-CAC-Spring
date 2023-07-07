@@ -3,7 +3,7 @@ package com.jbecerra.Concesionaria.controller;
 import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
 import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDTO;
 import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDTO;
-import com.jbecerra.Concesionaria.service.VehiclesService;
+import com.jbecerra.Concesionaria.service.VehicleService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,21 +13,21 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("v1/api/vehicles")
-public class VehiclesController {
-    final private VehiclesService vehiclesService;
+public class VehicleController {
+    final private VehicleService vehicleService;
 
-    public VehiclesController(VehiclesService vehiclesService) {
-        this.vehiclesService = vehiclesService;
+    public VehicleController(VehicleService vehicleService) {
+        this.vehicleService = vehicleService;
     }
 
     @PostMapping
     public ResponseEntity<ResponseVehicleDTO> addNewVehicle(@RequestBody VehicleDTO newVehicleDTO) {
-        return new ResponseEntity<>(vehiclesService.addVehicle(newVehicleDTO), HttpStatus.OK);
+        return new ResponseEntity<>(vehicleService.addVehicle(newVehicleDTO), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<ResponseVehiclesDTO> getAllUsedVehicles() {
-        return new ResponseEntity<>(vehiclesService.getAllUsedVehicles(), HttpStatus.OK);
+        return new ResponseEntity<>(vehicleService.getAllUsedVehicles(), HttpStatus.OK);
     }
 
     @GetMapping("dates")
@@ -38,11 +38,11 @@ public class VehiclesController {
             @RequestParam
             @DateTimeFormat(pattern = "yyyy.MM.dd")
             LocalDate to) {
-        return new ResponseEntity<>(vehiclesService.vehiclesSinceTo(since, to), HttpStatus.OK);
+        return new ResponseEntity<>(vehicleService.vehiclesSinceTo(since, to), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseVehicleDTO> getVehicleById(@PathVariable String id) {
-        return new ResponseEntity<>(vehiclesService.getVehicleById(id), HttpStatus.OK);
+    public ResponseEntity<ResponseVehicleDTO> getVehicleById(@PathVariable Long id) {
+        return new ResponseEntity<>(vehicleService.getVehicleById(id), HttpStatus.OK);
     }
 }
