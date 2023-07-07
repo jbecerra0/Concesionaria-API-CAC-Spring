@@ -1,16 +1,14 @@
 package com.jbecerra.Concesionaria.service;
 
-import com.jbecerra.Concesionaria.dto.request.ServiceVehicleDTO;
 import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
 import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDTO;
 import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDTO;
-import com.jbecerra.Concesionaria.entity.ServiceVehicle;
 import com.jbecerra.Concesionaria.entity.Vehicle;
 import com.jbecerra.Concesionaria.exceptions.InvalidDateRangeException;
 import com.jbecerra.Concesionaria.exceptions.VehicleNotFoundException;
 import com.jbecerra.Concesionaria.exceptions.VehiclesNotFoundException;
 import com.jbecerra.Concesionaria.repository.VehicleRepository;
-import org.modelmapper.ModelMapper;
+import com.jbecerra.Concesionaria.mapper.VehicleMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,17 +27,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public ResponseVehicleDTO addVehicle(VehicleDTO vehicleDTO) {
-        ModelMapper mapper = new ModelMapper();
-
-        List<ServiceVehicle> serviceVehicles = vehicleDTO.getServices()
-                .stream()
-                .map(service -> mapper.map(service, ServiceVehicle.class))
-                .toList();
-
-        Vehicle newVehicle = mapper.map(vehicleDTO, Vehicle.class);
-        newVehicle.setServiceVehicles(serviceVehicles);
-
-        serviceVehicles.forEach(serviceVehicle -> serviceVehicle.setVehicle(newVehicle));
+        Vehicle newVehicle = VehicleMapper.convertDTOToEntity(vehicleDTO);
 
         vehicleRepository.save(newVehicle);
 
@@ -48,7 +36,23 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public ResponseVehiclesDTO getAllUsedVehicles() {
-        return null;
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+
+        if (vehicles.isEmpty()) {
+            throw new VehiclesNotFoundException("No se han encontraron vehiculos.");
+        }
+
+        vehicles = vehicles.stream()
+                .filter(vehicle -> Integer.parseInt(vehicle.getCountOfOwners()) >= 1)
+                .toList();
+
+        if (vehicles.isEmpty()) {
+            throw new VehiclesNotFoundException("No se han encontraron vehiculos usados.");
+        }
+
+        List<VehicleDTO> vehiclesDTO = VehicleMapper.convertEntitiesToDTOS(vehicles);
+
+        return new ResponseVehiclesDTO("Vehiculos usados solicitados", vehiclesDTO);
     }
 
     @Override
@@ -60,24 +64,15 @@ public class VehicleServiceImpl implements VehicleService {
         List<Vehicle> vehicles = vehicleRepository.findByManufacturingDateBetween(since, to);
 
         if (vehicles.isEmpty()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", Locale.of("es", "ES"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
             throw new VehiclesNotFoundException("No se encontraron vehiculos manufacturados entre " + since.format(formatter) + " y el " + to.format(formatter));
         }
 
-        ModelMapper mapper = new ModelMapper();
+        List<VehicleDTO> vehiclesDTO = VehicleMapper.convertEntitiesToDTOS(vehicles);
 
-        List<VehicleDTO> vehicleDTOS = vehicles.stream().map(vehicle -> {
-            List<ServiceVehicleDTO> serviceVehicleDTOS = vehicle
-                    .getServiceVehicles()
-                    .stream()
-                    .map(serviceVehicle -> mapper.map(serviceVehicle, ServiceVehicleDTO.class))
-                    .toList();
-            VehicleDTO vehicleDTO = mapper.map(vehicle, VehicleDTO.class);
-            vehicleDTO.setServices(serviceVehicleDTOS);
-            return vehicleDTO;
-        }).toList();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
 
-        return new ResponseVehiclesDTO("Se han encontrado vehiculos manufacturados entre las 2 fechas proporcionadas", vehicleDTOS);
+        return new ResponseVehiclesDTO("Vehiculos manufacturados entre el " + since.format(formatter) + " y el " + to.format(formatter) + ".", vehiclesDTO);
     }
 
     @Override
@@ -85,20 +80,11 @@ public class VehicleServiceImpl implements VehicleService {
         Optional<Vehicle> vehicle = vehicleRepository.findById(id);
 
         if (vehicle.isEmpty()) {
-            throw new VehicleNotFoundException("Vehiculo solicitado no encontrado");
+            throw new VehicleNotFoundException("No se ha encontrado ningun vehiculo con el ID " + id + ".");
         }
 
-        ModelMapper mapper = new ModelMapper();
+        VehicleDTO vehicleDTO = VehicleMapper.convertEntityToDTO(vehicle.get());
 
-        List<ServiceVehicleDTO> serviceVehicleDTOS = vehicle.get()
-                .getServiceVehicles()
-                .stream()
-                .map(serviceVehicle -> mapper.map(serviceVehicle, ServiceVehicleDTO.class))
-                .toList();
-
-        VehicleDTO vehicleDTO = mapper.map(vehicle.get(), VehicleDTO.class);
-        vehicleDTO.setServices(serviceVehicleDTOS);
-
-        return new ResponseVehicleDTO("Vehiculo solicitado encontrado", vehicleDTO);
+        return new ResponseVehicleDTO("Vehiculo solicitado con el ID " + id + ".", vehicleDTO);
     }
 }

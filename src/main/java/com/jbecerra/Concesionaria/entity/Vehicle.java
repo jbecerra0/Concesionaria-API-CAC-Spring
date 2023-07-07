@@ -27,6 +27,6 @@ public class Vehicle {
     private String price;
     private String currency;
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
-    private List<ServiceVehicle> serviceVehicles;
+    private List<ServiceVehicle> servicesVehicle;
     private String countOfOwners;
 }

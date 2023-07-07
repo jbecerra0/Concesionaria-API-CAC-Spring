@@ -22,6 +22,6 @@ public class VehicleDTO {
     private String doors;
     private String price;
     private String currency;
-    private List<ServiceVehicleDTO> services;
+    private List<ServiceVehicleDTO> servicesVehicle;
     private String countOfOwners;
 }
