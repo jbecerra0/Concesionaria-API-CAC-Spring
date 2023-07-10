@@ -1,8 +1,8 @@
 package com.jbecerra.Concesionaria.service;
 
-import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
-import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDTO;
-import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDTO;
+import com.jbecerra.Concesionaria.dto.request.RequestVehicleDto;
+import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDto;
+import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDto;
 import com.jbecerra.Concesionaria.entity.Vehicle;
 import com.jbecerra.Concesionaria.exceptions.InvalidDateRangeException;
 import com.jbecerra.Concesionaria.exceptions.VehicleNotFoundException;
@@ -26,16 +26,16 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public ResponseVehicleDTO addVehicle(VehicleDTO vehicleDTO) {
-        Vehicle newVehicle = VehicleMapper.convertDTOToEntity(vehicleDTO);
+    public ResponseVehicleDto addVehicle(RequestVehicleDto vehicleDTO) {
+        Vehicle newVehicle = VehicleMapper.convertDtoToVehicle(vehicleDTO);
 
         vehicleRepository.save(newVehicle);
 
-        return new ResponseVehicleDTO("Vehiculo agregado con exito!", vehicleDTO);
+        return new ResponseVehicleDto("Vehiculo agregado con exito!", vehicleDTO);
     }
 
     @Override
-    public ResponseVehiclesDTO getAllUsedVehicles() {
+    public ResponseVehiclesDto getAllUsedVehicles() {
         List<Vehicle> vehicles = vehicleRepository.findAll();
 
         if (vehicles.isEmpty()) {
@@ -50,13 +50,13 @@ public class VehicleServiceImpl implements VehicleService {
             throw new VehiclesNotFoundException("No se han encontraron vehiculos usados.");
         }
 
-        List<VehicleDTO> vehiclesDTO = VehicleMapper.convertEntitiesToDTOS(vehicles);
+        List<RequestVehicleDto> vehiclesDTO = VehicleMapper.convertVehiclesToDtos(vehicles);
 
-        return new ResponseVehiclesDTO("Vehiculos usados solicitados", vehiclesDTO);
+        return new ResponseVehiclesDto("Vehiculos usados solicitados", vehiclesDTO);
     }
 
     @Override
-    public ResponseVehiclesDTO vehiclesSinceTo(LocalDate since, LocalDate to) {
+    public ResponseVehiclesDto vehiclesSinceTo(LocalDate since, LocalDate to) {
         if (since.isAfter(to)) {
             throw new InvalidDateRangeException("La fecha de inicio (" + since + ") no puede ser posterior a la fecha de fin (" + since + ").");
         }
@@ -68,23 +68,23 @@ public class VehicleServiceImpl implements VehicleService {
             throw new VehiclesNotFoundException("No se encontraron vehiculos manufacturados entre " + since.format(formatter) + " y el " + to.format(formatter));
         }
 
-        List<VehicleDTO> vehiclesDTO = VehicleMapper.convertEntitiesToDTOS(vehicles);
+        List<RequestVehicleDto> vehiclesDTO = VehicleMapper.convertVehiclesToDtos(vehicles);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
 
-        return new ResponseVehiclesDTO("Vehiculos manufacturados entre el " + since.format(formatter) + " y el " + to.format(formatter) + ".", vehiclesDTO);
+        return new ResponseVehiclesDto("Vehiculos manufacturados entre el " + since.format(formatter) + " y el " + to.format(formatter) + ".", vehiclesDTO);
     }
 
     @Override
-    public ResponseVehicleDTO getVehicleById(Long id) {
+    public ResponseVehicleDto getVehicleById(Long id) {
         Optional<Vehicle> vehicle = vehicleRepository.findById(id);
 
         if (vehicle.isEmpty()) {
             throw new VehicleNotFoundException("No se ha encontrado ningun vehiculo con el ID " + id + ".");
         }
 
-        VehicleDTO vehicleDTO = VehicleMapper.convertEntityToDTO(vehicle.get());
+        RequestVehicleDto vehicleDTO = VehicleMapper.convertVehicleToDto(vehicle.get());
 
-        return new ResponseVehicleDTO("Vehiculo solicitado con el ID " + id + ".", vehicleDTO);
+        return new ResponseVehicleDto("Vehiculo solicitado con el ID " + id + ".", vehicleDTO);
     }
 }

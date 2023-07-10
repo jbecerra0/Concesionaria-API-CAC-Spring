@@ -1,6 +1,6 @@
 package com.jbecerra.Concesionaria.mapper;
 
-import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
+import com.jbecerra.Concesionaria.dto.request.RequestVehicleDto;
 import com.jbecerra.Concesionaria.entity.Vehicle;
 import org.modelmapper.ModelMapper;
 
@@ -8,18 +8,18 @@ import java.util.List;
 
 public class VehicleMapper {
     private static final ModelMapper mapper = new ModelMapper();
-    public static Vehicle convertDTOToEntity(VehicleDTO vehicleDTO) {
+    public static Vehicle convertDtoToVehicle(RequestVehicleDto vehicleDTO) {
         return mapper.map(vehicleDTO, Vehicle.class);
     }
 
-    public static VehicleDTO convertEntityToDTO(Vehicle vehicle) {
-        return mapper.map(vehicle, VehicleDTO.class);
+    public static RequestVehicleDto convertVehicleToDto(Vehicle vehicle) {
+        return mapper.map(vehicle, RequestVehicleDto.class);
     }
 
-    public static List<VehicleDTO> convertEntitiesToDTOS(List<Vehicle> vehicles) {
+    public static List<RequestVehicleDto> convertVehiclesToDtos(List<Vehicle> vehicles) {
         return vehicles
                 .stream()
-                .map(VehicleMapper::convertEntityToDTO)
+                .map(VehicleMapper::convertVehicleToDto)
                 .toList();
     }
 }

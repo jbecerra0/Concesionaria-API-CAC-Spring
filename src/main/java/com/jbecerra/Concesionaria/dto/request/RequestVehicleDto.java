@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class VehicleDTO {
+public class RequestVehicleDto {
     private String brand;
     private String model;
     @JsonFormat(pattern="yyyy-MM-dd")
@@ -22,6 +22,6 @@ public class VehicleDTO {
     private String doors;
     private String price;
     private String currency;
-    private List<ServiceVehicleDTO> servicesVehicle;
+    private List<RequestServiceVehicleDto> servicesVehicle;
     private String countOfOwners;
 }

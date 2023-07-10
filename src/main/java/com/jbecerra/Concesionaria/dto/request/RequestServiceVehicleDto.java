@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServiceVehicleDTO {
+public class RequestServiceVehicleDto {
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate date;
     private String kilometers;

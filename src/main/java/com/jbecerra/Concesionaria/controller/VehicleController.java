@@ -1,8 +1,8 @@
 package com.jbecerra.Concesionaria.controller;
 
-import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
-import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDTO;
-import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDTO;
+import com.jbecerra.Concesionaria.dto.request.RequestVehicleDto;
+import com.jbecerra.Concesionaria.dto.response.ResponseVehicleDto;
+import com.jbecerra.Concesionaria.dto.response.ResponseVehiclesDto;
 import com.jbecerra.Concesionaria.service.VehicleService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -21,17 +21,17 @@ public class VehicleController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseVehicleDTO> addNewVehicle(@RequestBody VehicleDTO newVehicleDTO) {
-        return new ResponseEntity<>(vehicleService.addVehicle(newVehicleDTO), HttpStatus.OK);
+    public ResponseEntity<ResponseVehicleDto> addNewVehicle(@RequestBody RequestVehicleDto newVehicleDto) {
+        return new ResponseEntity<>(vehicleService.addVehicle(newVehicleDto), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<ResponseVehiclesDTO> getAllUsedVehicles() {
+    public ResponseEntity<ResponseVehiclesDto> getAllUsedVehicles() {
         return new ResponseEntity<>(vehicleService.getAllUsedVehicles(), HttpStatus.OK);
     }
 
     @GetMapping("dates")
-    public ResponseEntity<ResponseVehiclesDTO> getAllManufacturedSinceTo(
+    public ResponseEntity<ResponseVehiclesDto> getAllManufacturedSinceTo(
             @RequestParam
             @DateTimeFormat(pattern = "yyyy.MM.dd")
             LocalDate since,
@@ -42,7 +42,7 @@ public class VehicleController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseVehicleDTO> getVehicleById(@PathVariable Long id) {
+    public ResponseEntity<ResponseVehicleDto> getVehicleById(@PathVariable Long id) {
         return new ResponseEntity<>(vehicleService.getVehicleById(id), HttpStatus.OK);
     }
 }

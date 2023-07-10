@@ -1,6 +1,6 @@
 package com.jbecerra.Concesionaria.dto.response;
 
-import com.jbecerra.Concesionaria.dto.request.VehicleDTO;
+import com.jbecerra.Concesionaria.dto.request.RequestVehicleDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseVehiclesDTO {
+public class ResponseVehiclesDto {
     String message;
-    List<VehicleDTO> vehiclesDTO;
+    List<RequestVehicleDto> vehiclesDto;
 }
